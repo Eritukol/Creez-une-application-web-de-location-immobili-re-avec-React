@@ -1,0 +1,375 @@
+.mon-icone {
+  /* Applique un filtre qui : 
+     1) met toutes les parties opaques en noir (brightness(0)) 
+     2) maintient la saturation à 100% (saturate(100%)) 
+     3) inverse (invert(1)) pour obtenir du blanc à la place de noir */
+  filter: brightness(0) saturate(100%) invert(1);
+}
+Noamane Massi
+16:21
+import React from "react";
+import logo from "../assets/logo.png";
+import { Link, useLocation } from "react-router-dom";
+
+export default function Header() {
+  const location = useLocation();
+
+  return (
+    <header>
+      <nav>
+        <img src={logo} alt="Logo" />
+        <ul>
+          <li>
+            <Link
+              to={"/"}
+              className={location.pathname === "/" ? "active" : ""}
+            >
+              Accueil
+            </Link>
+          </li>
+          <li>
+            <Link
+              to={"/a-propos"}
+              className={location.pathname === "/a-propos" ? "active" : ""}
+            >
+              A Propos
+            </Link>
+          </li>
+        </ul>
+      </nav>
+    </header>
+  );
+}
+Noamane Massi
+16:28
+import React from "react";
+import { NavLink } from "react-router-dom";
+import logo from "../assets/logo.png";
+
+const routes = [
+  { path: "/", label: "Accueil" },
+  { path: "/a-propos", label: "A Propos" },
+];
+
+export default function Header() {
+  return (
+    <header>
+      <nav>
+        <img src={logo} alt="Logo" />
+        <ul>
+          {routes.map(({ path, label }) => (
+            <li key={path}>
+              <NavLink
+                to={path}
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                {label}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </header>
+  );
+}
+Noamane Massi
+16:29
+Pourquoi c’est plus clair ?
+NavLink gère le “active” automatiquement
+Plutôt que de comparer manuellement location.pathname === "/...", on utilise le callback className={({ isActive }) => …} fourni par NavLink. Dès que l’URL correspond à to={path}, isActive sera true et la classe "active" sera appliquée.
+
+Boucle sur un tableau de routes
+Au lieu d’écrire deux <li>…</li> à la main, on centralise la config des liens dans une variable routes.
+
+Si, demain, vous ajoutez ou modifiez une route (chemin ou libellé), il suffit de mettre à jour ce tableau.
+
+Cela évite la répétition de balises et limite les risques d’erreur.
+
+Code plus concis et plus facile à maintenir
+
+On ne répète plus le useLocation() ni la logique location.pathname === ….
+
+Le composant est plus court et la structure est plus évidente : on voit tout de suite la liste des routes.
+Noamane Massi
+16:36
+import React from "react";
+import "./Footer.css";
+
+export default function Footer() {
+  return (
+    <footer className="footer">
+      <div className="footer__content">
+        <img
+          src="/logo192.png"
+          alt="Logo Kasa (blanc)"
+          className="footer__logo"
+        />
+        <p className="footer__copyright">
+          © 2020 Kasa. All rights reserved
+        </p>
+      </div>
+    </footer>
+  );
+}
+Noamane Massi
+16:36
+https://chatgpt.com/share/683b13e8-7d3c-8009-82e8-b8bf0e11acb1
+Noamane Massi
+16:36
+https://chatgpt.com/share/683b13e8-7d3c-8009-82e8-b8bf0e11acb1
+Noamane Massi
+16:37
+.footer {
+  background-color: #000;            /* fond noir */
+  padding: 2rem 1rem;               /* espace interne */
+  text-align: center;
+}
+
+.footer__content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer__logo {
+  width: 120px;                     /* ajustez la taille de votre logo */
+  filter: invert(1);                /* si le logo est en couleur, on l’inverse pour qu’il soit blanc */
+}
+
+.footer__copyright {
+  color: #fff;                      /* texte blanc */
+  font-size: 0.9rem;
+  margin: 0;
+}
+Noamane Massi
+16:37
+import React from "react";
+import "./Banner.css";
+
+export default function Banner({ imageUrl, title }) {
+  return (
+    <div
+      className="banner"
+      style={{
+        backgroundImage: `url(${imageUrl})`,
+      }}
+    >
+      <h1 className="banner__title">{title}</h1>
+    </div>
+  );
+}
+Noamane Massi
+16:37
+.banner {
+  position: relative;
+  width: 100%;
+  height: 300px;              /* hauteur du bandeau, modifiable */
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 2rem;        /* espace en dessous du banner */
+}
+
+/* Overlay sombre pour assombrir légèrement l’image et faire ressortir le texte */
+.banner::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);  /* opacité 40% */
+  z-index: 1;
+}
+
+.banner__title {
+  position: relative;         /* au-dessus de l’overlay */
+  color: #fff;
+  font-size: 2rem;
+  z-index: 2;
+  text-align: center;
+  padding: 0 1rem;            /* pour éviter que le texte touche les bords sur mobile */
+}
+Noamane Massi
+16:38
+import React from "react";
+import { Link } from "react-router-dom";
+import "./Card.css";
+
+export default function Card({ id, title, cover }) {
+  return (
+    <Link to={`/logement/${id}`} className="card">
+      {/* 
+        Le `to` est un exemple pour aller vers /logement/:id 
+        Adaptez selon votre routing réel. 
+      */}
+      <div
+        className="card__image"
+        style={{ backgroundImage: `url(${cover})` }}
+      >
+        {/* Overlay dégradé pour faire ressortir le titre */}
+        <div className="card__overlay" />
+        <span className="card__title">{title}</span>
+      </div>
+    </Link>
+  );
+}
+Noamane Massi
+16:39
+.card {
+  display: block;
+  text-decoration: none;       /* on supprime le soulignement */
+  color: inherit;
+}
+
+/* Container qui a l’image de fond */
+.card__image {
+  position: relative;
+  width: 100%;
+  /* ratio 4:3 ou 3:2 selon vos visuels → ici on fait un carré */
+  aspect-ratio: 1 / 1;           /* disponible dans la plupart des navigateurs modernes */
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+/* Effet au survol : zoom léger */
+.card__image:hover {
+  transform: scale(1.05);
+}
+
+/* Overlay dégradé du bas vers le centre (plus foncé en bas) */
+.card__overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60%;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.6),
+    rgba(0, 0, 0, 0.0)
+  );
+  z-index: 1;
+}
+
+/* Titre du logement, positionné en bas à gauche, au-dessus de l’overlay */
+.card__title {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  z-index: 2;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+Noamane Massi
+16:39
+src/
+├─ assets/
+│   └─ logo.png
+├─ components/
+│   ├─ Banner.jsx
+│   ├─ Card.jsx
+│   ├─ Footer.jsx
+│   ├─ Header.jsx       ← (votre composant déjà existant)
+│   └─ Banner.css
+│   └─ Card.css
+│   └─ Footer.css
+├─ pages/
+│   ├─ Home.jsx
+│   └─ APropos.jsx      ← (votre page “À propos” si vous en avez une)
+├─ logements.json
+├─ App.jsx
+├─ index.jsx
+└─ index.css
+Noamane Massi
+16:43
+Explications :
+
+La div.card__image est un container carré (grâce à aspect-ratio: 1/1).
+
+On applique background-image: url(${cover}) en inline pour charger l’image du logement.
+
+L’élément .card__overlay (positionné en absolute au bas de .card__image) est un dégradé vertical qui part du noir semi-transparent vers transparent :
+
+css
+Copier
+Modifier
+background: linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0));
+Cela crée un fondu qui assombrit le bas de l’image pour que le texte (titre) soit très lisible.
+
+Le titre (.card__title) est placé en bas à gauche, au-dessus de cet overlay.
+
+Au survol (:hover), on agrandit légèrement la carte pour un petit effet “zoom”.
+Noamane Massi
+16:46
+import React from "react";
+import logementsData from "../logements.json";
+import Banner from "../components/Banner";
+import Card from "../components/Card";
+import "./Home.css";
+
+export default function Home() {
+  return (
+    <main className="home">
+      {/* Banniere d’en-tête */}
+      <Banner
+        imageUrl="https://s3-eu-west-1.amazonaws.com/course.oc-static.com/projects/front-end-kasa-project/accommodation-8-1.jpg"
+        title="Chez vous, partout et ailleurs"
+      />
+
+      {/* Section cartes */}
+      <section className="home__cards">
+        {logementsData.map((logement) => (
+          <Card
+            key={logement.id}
+            id={logement.id}
+            title={logement.title}
+            cover={logement.cover}
+          />
+        ))}
+      </section>
+    </main>
+  );
+}
+Noamane Massi
+16:47
+.home {
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Grid de cartes : 3 colonnes sur grand écran, 2 sur médium, 1 sur mobile */
+.home__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+Noamane Massi
+16:47
+.home {
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Grid de cartes : 3 colonnes sur grand écran, 2 sur médium, 1 sur mobile */
+.home__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
